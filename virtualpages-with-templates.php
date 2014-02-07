@@ -1,12 +1,13 @@
 <?php
 /*
 Plugin Name: Virtual Pages with Templates
-Plugin URI: https://github.com/Link7/wp-plugins/tree/develop/virtualpages-with-templates
-Description: A plugin to display virtual pages with support for phpbay and phpzon
+Plugin URI: https://github.com/Link7/virtual-pages-with-templates
+Description: A plugin to display virtual pages with support for shortcodes
 Version: 1.0
-Author: DEB
-Author URI: https://github.com/deanearlbartolabac
-License: GPL
+Author: Link7
+Author URI: https://github.com/Link7
+License: GPL3
+License URI: http://www.gnu.org/licenses/gpl.html
 */
 if (!class_exists('VirtualPagesTemplates'))
 {
