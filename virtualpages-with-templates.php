@@ -75,7 +75,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 	  	public function display_menu()
 		{
-			add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', 'virtualpages-with-templates/form.php' );
+			add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
 			do_action('vpt_check_posts');
 
 
