@@ -115,7 +115,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 		public function init_keyword($current_url_trimmed, $virtualpageurl_trimmed){
 			global $wp,$wp_query;
-			if (!empty($wp_query->query['name']))
+			if (isset($wp_query->query['name']) and $wp_query->query['name'])
             {
             	$this->keyword = $wp_query->query['name'];
             }
@@ -151,7 +151,8 @@ if (!class_exists('VirtualPagesTemplates'))
             $this->options = get_option('vpt_options');
 
             $current_url = $_SERVER['REQUEST_URI'];
-            
+            if (!isset($this->options['use_custom_permalink_structure']))
+            	$this->options['use_custom_permalink_structure'] = 0;
             $this->use_custom_permalink = (BOOL) $this->options['use_custom_permalink_structure'];
 
             if (!$this->use_custom_permalink)
@@ -165,7 +166,7 @@ if (!class_exists('VirtualPagesTemplates'))
 
             $this->init_keyword($current_url_trimmed, $virtualpageurl_trimmed);
             $virtual_url = str_replace('%postname%', $this->keyword, $virtualpageurl_trimmed);
-            if ($virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || $wp_query->query['error'] == '404') ) 
+            if ($virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404')) ) 
             {
             	// get the template details
             	$this->template_content = $this->get_template_content();
