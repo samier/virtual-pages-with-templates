@@ -35,13 +35,24 @@ if (!class_exists('VirtualPagesTemplates'))
 				remove_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 ); // Remove WordPress shortlink on wp_head hook
 			}else{
 				add_action( 'admin_menu', array($this, 'display_menu') );
-			}
+				register_uninstall_hook(__FILE__, array('VirtualPagesTemplates','vpt_uninstall_plugin'));
 
+			}
 			
 			$this->permalink_structure = get_option('permalink_structure');
 	  	}
 
-
+	  	/**
+		* vpt_uninstall_plugin
+		* 
+		* completely removes the plugin installation
+		*
+		* @access public 
+		* @return void
+		*/
+	  	public function vpt_uninstall_plugin(){
+	  		delete_option('vpt_options');
+	  	}
 
 	  	/**
 		* virtual_page_redirect
