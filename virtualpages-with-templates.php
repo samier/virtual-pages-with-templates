@@ -21,7 +21,8 @@ if (!class_exists('VirtualPagesTemplates'))
         public $permalink_structure = NULL;
         public $custom_permalink_structure = NULL;
         public $keyword = NULL;
-
+        public $notice = NULL;
+        public $notice_iserror = FALSE;
 
 		public function __construct() 
 		{	
@@ -102,6 +103,9 @@ if (!class_exists('VirtualPagesTemplates'))
 				unset($_POST['vpt_hidden']);
 				unset($_POST['submit']);
 				update_option('vpt_options', $_POST);
+				$this->notice = "Settings saved.";
+				add_action('admin_notices', array($this, 'display_notification'));
+
 			}
 		}
 
@@ -288,6 +292,18 @@ if (!class_exists('VirtualPagesTemplates'))
 			// do site includes here
 			
 		}
+
+		public function display_notification()
+		{	
+			if ($this->notice_iserror) {
+				echo '<div id="message" class="error">';
+			}
+			else {
+				echo '<div id="message" class="updated fade">';
+			}
+
+			echo "<p><strong>$this->notice</strong></p></div>";
+		}   
 
 	}	
 }
