@@ -22,6 +22,7 @@ if (!class_exists('VirtualPagesTemplates'))
         public $custom_permalink_structure = NULL;
         public $keyword = NULL;
 
+
 		public function __construct() 
 		{	
 			if ( ! is_admin() )
@@ -33,11 +34,13 @@ if (!class_exists('VirtualPagesTemplates'))
 				remove_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 ); // Remove WordPress shortlink on wp_head hook
 			}else{
 				add_action( 'admin_menu', array($this, 'display_menu') );
-				add_action('vpt_check_posts', array($this, 'check_posts') );	
 			}
 
+			
 			$this->permalink_structure = get_option('permalink_structure');
 	  	}
+
+
 
 	  	/**
 		* virtual_page_redirect
@@ -76,10 +79,13 @@ if (!class_exists('VirtualPagesTemplates'))
 		{
 			$menu_slug = add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
 			$menu_slug = str_replace('settings_page_', '', $menu_slug) . '.php';
+
 			// use `admin_print_scripts` instead of `admin_enqueue_scripts` so this only loads on this specific form and NOT on all admin pages
 			add_action('admin_print_scripts-' . $menu_slug, array($this, 'admin_includes') );
 
-			do_action('vpt_check_posts');
+			// load on checking of $_POSTs when on this page
+			add_action("load-".$menu_slug, array($this,'check_posts'));
+			
 		}
 
 		/**
@@ -92,7 +98,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 		public function check_posts()
 		{	
-			if($_POST['vpt_hidden'] == 'Y') {  
+			if(isset($_POST['vpt_hidden']) && $_POST['vpt_hidden'] == 'Y') {  
 				unset($_POST['vpt_hidden']);
 				unset($_POST['submit']);
 				update_option('vpt_options', $_POST);
