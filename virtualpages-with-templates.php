@@ -54,7 +54,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		    if (is_search()) {
 		        global $wp_query;
 
-		        if ($this->options['affect_search'] && (count($wp_query->posts) == 0 || $wp_query->query['error'] == '404' || (count($wp_query->posts) == 1 && $wp_query->post->ID == -1)))
+		        if ($this->options['affect_search'] && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404') || (count($wp_query->posts) == 1 && $wp_query->post->ID == -1)))
 		        {
 	        	$structure = $this->permalink_structure;
 	        	if ($this->use_custom_permalink){
