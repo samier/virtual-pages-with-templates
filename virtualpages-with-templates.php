@@ -37,8 +37,6 @@ if (!class_exists('VirtualPagesTemplates'))
 			}
 
 			$this->permalink_structure = get_option('permalink_structure');
-
-			$this->includes();
 	  	}
 
 	  	/**
@@ -76,10 +74,12 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 	  	public function display_menu()
 		{
-			add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
+			$menu_slug = add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
+			$menu_slug = str_replace('settings_page_', '', $menu_slug) . '.php';
+			// use `admin_print_scripts` instead of `admin_enqueue_scripts` so this only loads on this specific form and NOT on all admin pages
+			add_action('admin_print_scripts-' . $menu_slug, array($this, 'admin_includes') );
+
 			do_action('vpt_check_posts');
-
-
 		}
 
 		/**
@@ -109,7 +109,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 		public function init_keyword($current_url_trimmed, $virtualpageurl_trimmed){
 			global $wp,$wp_query;
-			if ($wp_query->query['name'])
+			if (!empty($wp_query->query['name']))
             {
             	$this->keyword = $wp_query->query['name'];
             }
@@ -259,26 +259,12 @@ if (!class_exists('VirtualPagesTemplates'))
 		}
 
 		/**
-		 * Include required core files used in admin and on the frontend.
-		 *
-		 * @access public
-		 * @return void
-		 */
-		private function includes()
-		{
-			if ( is_admin() )
-				$this->admin_includes();
-			if ( ! is_admin() )
-				$this->frontend_includes();
-		}
-
-		/**
 		 * Include required admin files.
 		 *
 		 * @access public
 		 * @return void
 		 */
-		private function admin_includes()
+		public function admin_includes()
 		{
 			// do admin includes here
 			wp_enqueue_script('vpt-scripts',plugins_url( '/js/scripts.js' , __FILE__ ),array( 'jquery' ));
@@ -290,7 +276,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		 * @access public
 		 * @return void
 		 */
-		private function frontend_includes()
+		public function frontend_includes()
 		{
 			// do site includes here
 			
