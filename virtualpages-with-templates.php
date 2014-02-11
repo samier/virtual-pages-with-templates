@@ -314,7 +314,7 @@ if (!class_exists('VirtualPagesTemplates'))
 				echo '<div id="message" class="updated fade">';
 			}
 
-			echo "<p><strong>$this->notice</strong></p></div>";
+			echo '<p><strong>' . $this->notice . '</strong></p></div>';
 		}   
 
 	}	
