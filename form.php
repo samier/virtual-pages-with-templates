@@ -14,8 +14,8 @@
         $post_type = $options['post_type'];
         $page_template = $options['page_template'];
         $spinmethod = $options['spinmethod'];
-        $use_custom_permalink_structure = isset($options['use_custom_permalink_structure']) ? $options['use_custom_permalink_structure'] : FALSE;      
-        $affect_search = isset($options['affect_search']) ? $options['affect_search'] : FALSE;
+        $use_custom_permalink_structure = $options['use_custom_permalink_structure'];
+        $affect_search = $options['affect_search'];
     }
 
     $spinmethods = array(

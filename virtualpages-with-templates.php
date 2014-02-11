@@ -113,7 +113,8 @@ if (!class_exists('VirtualPagesTemplates'))
 			if(isset($_POST['vpt_hidden']) && $_POST['vpt_hidden'] == 'Y') {  
 				unset($_POST['vpt_hidden']);
 				unset($_POST['submit']);
-				$_POST['use_custom_permalink_structure'] = isset($_POST['use_custom_permalink_structure']) ? $_POST['use_custom_permalink_structure'] : FALSE;
+				$_POST['use_custom_permalink_structure'] = isset($_POST['use_custom_permalink_structure']) ? $_POST['use_custom_permalink_structure'] : '0';
+				$_POST['affect_search'] = isset($_POST['affect_search']) ? $_POST['affect_search'] : '0';
 				update_option('vpt_options', $_POST);
 				$this->notice = 'Settings saved.';
 				add_action('admin_notices', array($this, 'display_notification'));
