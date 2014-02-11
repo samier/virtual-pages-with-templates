@@ -114,13 +114,40 @@ if (!class_exists('VirtualPagesTemplates'))
 			if(isset($_POST['vpt_hidden']) && $_POST['vpt_hidden'] == 'Y') {  
 				unset($_POST['vpt_hidden']);
 				unset($_POST['submit']);
+
+				$extra = '';
+				if (!isset($_POST['page_template'])){
+					$extra = '&no-template=true';
+				}
+				else
+				{
 				$_POST['use_custom_permalink_structure'] = isset($_POST['use_custom_permalink_structure']) ? $_POST['use_custom_permalink_structure'] : '0';
 				$_POST['affect_search'] = isset($_POST['affect_search']) ? $_POST['affect_search'] : '0';
 				update_option('vpt_options', $_POST);
+					$extra = '&settings-updated=true';
+				}
+				
+				wp_redirect(admin_url('options-general.php?page=' . $this->menu_slug . $extra));
+				
+			}
+
+			if ( ! empty( $_GET['settings-updated'] ) ) 
+			{
 				$this->notice = 'Settings saved.';
 				add_action('admin_notices', array($this, 'display_notification'));
-				wp_redirect(admin_url('options-general.php?page=' . $this->menu_slug));
 			}
+
+			if ( ! empty( $_GET['no-template'] ) ) 
+			{
+				$this->notice = 'Page template is required. You can make a template by creating a <a href="'.admin_url('post-new.php').'">post</a> or a <a href="'.admin_url('post-new.php?post_type=page').'">page</a> as save it as draft.';
+				$this->notice_iserror = TRUE;
+				add_action('admin_notices', array($this, 'display_notification'));
+			}
+		}
+
+		private function validate_page_template()
+		{
+			//if ()
 		}
 
 		/**

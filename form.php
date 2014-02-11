@@ -29,7 +29,24 @@
         'annually' => 'annually',
         'false' => 'always spin'
     );
+    $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );
+    $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );
+
+    
+    $class = 'hidden';
+    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['no-template']) && !isset($_GET['settings-updated']))
+    {
+        $class = '';    
+    }
+    
     ?>
+    <div class="error no-template-message <?php echo $class;?>" id="message">
+        <p>
+            <strong>
+                Page template is required. You can make a template by creating a <a href="'.admin_url('post-new.php').'">post</a> or a <a href="'.admin_url('post-new.php?post_type=page').'">page</a> as save it as draft.
+            </strong>
+        </p>
+    </div>
     <form id="vpt_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" class="validate">
         <input type="hidden" name="vpt_hidden" value="Y"/>  
         <table class="form-table">
@@ -64,9 +81,6 @@
             <tr valign="top">
             <th scope="row"><label for="default_role"><?php _e("Page Template: " ); ?></label></th>
                 <td>
-                <?php $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );?>
-                <?php $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );?>
-
                 <select id="page_template" name="page_template" style="width: 25em">
                     <?php if (!empty($posts->posts)) :?>
                         <optgroup label="Posts">
@@ -85,6 +99,7 @@
                         </optgroup>
                     <?php endif;?>
                 </select>
+                
                 <p class="description">Specify an existing post or page (one that isn’t published) that will be used as a template.</p>
                 </td>
             </tr>
