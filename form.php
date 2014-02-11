@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit('No direct script access allowed'); // Exit if accessed directly ?>
 <div class="wrap">
     <?php echo "<h2>" . __( 'Virtual Pages and Templates Settings' ) . "</h2>";?>  
     <?php 

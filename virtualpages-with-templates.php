@@ -9,6 +9,8 @@ Author URI: https://github.com/Link7
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl.html
 */
+if ( ! defined( 'ABSPATH' ) ) exit('No direct script access allowed'); // Exit if accessed directly
+
 if (!class_exists('VirtualPagesTemplates'))
 {
 	class VirtualPagesTemplates
