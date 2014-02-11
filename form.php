@@ -1,5 +1,6 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit('No direct script access allowed'); // Exit if accessed directly ?>
 <div class="wrap">
-    <?php echo "<h2>" . __( 'Virtual Pages and Templates Settings' ) . "</h2>";?>  
+    <?php echo '<h2>' . __( 'Virtual Pages and Templates Settings' ) . '</h2>';?>  
     <?php 
     $options = get_option('vpt_options');
     $virtualpageurl = '/shop/%postname%';
@@ -8,6 +9,7 @@
     $spinmethod = 'domainpage';
     $use_custom_permalink_structure = FALSE;
     $affect_search = TRUE;
+
     if (!empty($options)){
         $virtualpageurl = $options['virtualpageurl'];
         $post_type = $options['post_type'];
@@ -28,13 +30,30 @@
         'annually' => 'annually',
         'false' => 'always spin'
     );
+    $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );
+    $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );
+
+    
+    $class = 'hidden';
+    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['no-template']) && !isset($_GET['settings-updated']))
+    {
+        $class = '';    
+    }
+    
     ?>
+    <div class="error no-template-message <?php echo $class;?>" id="message">
+        <p>
+            <strong>
+                Page template is required. You can make a template by creating a <a href="<?php echo admin_url('post-new.php')?>">post</a> or a <a href="<?php echo admin_url('post-new.php?post_type=page')?>">page</a> as save it as draft.
+            </strong>
+        </p>
+    </div>
     <form id="vpt_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" class="validate">
         <input type="hidden" name="vpt_hidden" value="Y"/>  
         <table class="form-table">
             <tbody>
             <tr valign="top">
-                <th scope="row"><label for="virtualpageurl"><?php _e("Virtual Page URL: " ); ?></label></th>
+                <th scope="row"><label for="virtualpageurl"><?php _e('Virtual Page URL: '); ?></label></th>
                 <td>
                     <?php if ($use_custom_permalink_structure) $checked = 'checked="checked"'; else $checked = '';?>
                     <label for="users_can_register"><input type="checkbox" value="1" id="use_custom_permalink_structure" <?php echo $checked;?> name="use_custom_permalink_structure">Use custom permalink structure</label>
@@ -49,9 +68,9 @@
             </tr>
 
             <tr>
-            <th scope="row"><?php _e("Post or Post? " ); ?></th>
+            <th scope="row"><?php _e('Post or Post? ' ); ?></th>
             <td>
-                <fieldset><legend class="screen-reader-text"><span><?php _e("Post or Post? " ); ?></span></legend>
+                <fieldset><legend class="screen-reader-text"><span><?php _e('Post or Post? ' ); ?></span></legend>
                 <?php if ($post_type == 'page') $checked = 'checked="checked"'; else $checked = '';?>
                 <label title="Page"><input type="radio" <?php echo $checked;?> value="page" name="post_type"> <span>Page</span></label><br>
                 <?php if ($post_type == 'post') $checked = 'checked="checked"'; else $checked = '';?>
@@ -61,11 +80,8 @@
             </td>
            
             <tr valign="top">
-            <th scope="row"><label for="default_role"><?php _e("Page Template: " ); ?></label></th>
+            <th scope="row"><label for="default_role"><?php _e('Page Template: ' ); ?></label></th>
                 <td>
-                <?php $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );?>
-                <?php $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );?>
-
                 <select id="page_template" name="page_template" style="width: 25em">
                     <?php if (!empty($posts->posts)) :?>
                         <optgroup label="Posts">
@@ -84,11 +100,12 @@
                         </optgroup>
                     <?php endif;?>
                 </select>
+                
                 <p class="description">Specify an existing post or page (one that isn’t published) that will be used as a template.</p>
                 </td>
             </tr>
 
-            <th scope="row"><label for="spinmethod"><?php _e("Spin Method: " ); ?></label></th>
+            <th scope="row"><label for="spinmethod"><?php _e('Spin Method: ' ); ?></label></th>
                 <td>
                 <select id="spinmethod" name="spinmethod"  style="width: 25em">
                     <?php foreach ($spinmethods as $spinid => $spinvalue) :?>
@@ -100,7 +117,7 @@
                 </td>
             </tr>
 
-            <th scope="row"><?php _e("Affect search result " ); ?></th>
+            <th scope="row"><?php _e('Affect search result ' ); ?></th>
             <td>
                 <?php if ($affect_search) $checked = 'checked="checked"'; else $checked = '';?>
                <label for="affect_search"><input type="checkbox" value="1" id="affect_search" <?php echo $checked;?> name="affect_search"></label>

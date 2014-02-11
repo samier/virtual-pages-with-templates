@@ -3,6 +3,14 @@ jQuery(document).ready(function () {
 	jQuery('#use_custom_permalink_structure').change(function () {
 		Vpt.toggleUrlSettings(jQuery(this).is(':checked'));
 	});
+
+	jQuery( "#vpt_form" ).submit(function( event ) {
+		
+		if (Vpt.validate_form())
+			return
+		else
+			event.preventDefault();
+	});
 });
 
 
@@ -15,5 +23,18 @@ var Vpt = {
 			jQuery('#use_custom_pageurl').hide();
 			jQuery('#use_permalink_label').show();
 		}
+	},
+	validate_form : function (){
+		if (!jQuery('#page_template').val()){
+			jQuery('#message:not(.no-template-message)').remove();
+			jQuery('.error:not(.no-template-message)').remove();
+			jQuery('.no-template-message ').show();
+			return false;
+		}else{
+			jQuery('.no-template-message ').hide();	
+			return true;
 	}
+}
+
+
 }
