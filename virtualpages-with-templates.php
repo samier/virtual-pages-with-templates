@@ -307,7 +307,7 @@ if (!class_exists('VirtualPagesTemplates'))
 
 			$this->template = get_post($this->options['page_template']);      
 
-			$this->template_content = str_replace('%keyword%', $this->keyword, $this->template->post_content);
+			$this->template_content = str_replace('%vpt-keyword%', $this->keyword, $this->template->post_content);
 
 			return $this->template_content;
 		}

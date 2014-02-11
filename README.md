@@ -18,9 +18,9 @@ This is an initial plugin for displaying virtual pages which can use a template 
 2. Add contents, may contain text, html and shortcodes (see example content show below)
 
 ```
-Welcome to this website please find the products about <strong>%keyword%</strong> below and if you can’t find your item just use the search box!
+Welcome to this website please find the products about <strong>%vpt-keyword%</strong> below and if you can’t find your item just use the search box!
 
-[phpbay keywords="%keyword%" num="8" siteid="1" sortorder="BestMatch" templatename="columns" columns="4"]
+[phpbay keywords="%vpt-keyword%" num="8" siteid="1" sortorder="BestMatch" templatename="columns" columns="4"]
 ```
 
 3. save page as `draft` (note: virtual pages will use pages which are unpublished)
