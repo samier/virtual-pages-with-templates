@@ -27,6 +27,5 @@ Welcome to this website please find the products about <strong>%keyword%</strong
 4. goto `Settings` > `Permalinks` - (optional), e.g. `/shop/%postname%/`
 4. In the admin panel, open - `Virtual Page Settings`
 5. update to your desired settings.
-
 ## Contributors
 [@deanearlbartolabac](https://github.com/deanearlbartolabac)

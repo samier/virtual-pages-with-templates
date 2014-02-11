@@ -96,7 +96,7 @@ if (!class_exists('VirtualPagesTemplates'))
 			add_action('admin_print_scripts-' . $menu_slug, array($this, 'admin_includes') );
 
 			// load on checking of $_POSTs when on this page
-			add_action("load-".$menu_slug, array($this,'check_posts'));
+			add_action('load-'.$menu_slug, array($this,'check_posts'));
 			
 		}
 
@@ -113,8 +113,9 @@ if (!class_exists('VirtualPagesTemplates'))
 			if(isset($_POST['vpt_hidden']) && $_POST['vpt_hidden'] == 'Y') {  
 				unset($_POST['vpt_hidden']);
 				unset($_POST['submit']);
+				$_POST['use_custom_permalink_structure'] = isset($_POST['use_custom_permalink_structure']) ? $_POST['use_custom_permalink_structure'] : FALSE;
 				update_option('vpt_options', $_POST);
-				$this->notice = "Settings saved.";
+				$this->notice = 'Settings saved.';
 				add_action('admin_notices', array($this, 'display_notification'));
 
 			}
@@ -217,8 +218,8 @@ if (!class_exists('VirtualPagesTemplates'))
                 $wp_query->is_home = FALSE;
                 $wp_query->is_archive = FALSE;
                 $wp_query->is_category = FALSE;
-                unset($wp_query->query["error"]);
-                $wp_query->query_vars["error"]="";
+                unset($wp_query->query['error']);
+                $wp_query->query_vars['error']='';
                 $wp_query->is_404 = FALSE;
                 $wp_query->found_posts = TRUE;
                 $wp_query->is_attachment = FALSE;
