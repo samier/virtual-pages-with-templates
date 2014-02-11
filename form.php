@@ -44,7 +44,7 @@
     <div class="error no-template-message <?php echo $class;?>" id="message">
         <p>
             <strong>
-                Page template is required. You can make a template by creating a <a href="'.admin_url('post-new.php').'">post</a> or a <a href="'.admin_url('post-new.php?post_type=page').'">page</a> as save it as draft.
+                Page template is required. You can make a template by creating a <a href="<?php echo admin_url('post-new.php')?>">post</a> or a <a href="<?php echo admin_url('post-new.php?post_type=page')?>">page</a> as save it as draft.
             </strong>
         </p>
     </div>
