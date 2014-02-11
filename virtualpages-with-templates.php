@@ -23,6 +23,7 @@ if (!class_exists('VirtualPagesTemplates'))
         public $keyword = NULL;
         public $notice = NULL;
         public $notice_iserror = FALSE;
+        public $menu_slug = NULL;
 
 		public function __construct() 
 		{	
@@ -89,14 +90,14 @@ if (!class_exists('VirtualPagesTemplates'))
 		*/
 	  	public function display_menu()
 		{
-			$menu_slug = add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
-			$menu_slug = str_replace('settings_page_', '', $menu_slug) . '.php';
+			$this->menu_slug = add_options_page( 'Virtual Page Settings', 'Virtual Page Settings', 'manage_options', dirname(__FILE__) . '/form.php' );
+			$this->menu_slug = str_replace('settings_page_', '', $this->menu_slug) . '.php';
 
 			// use `admin_print_scripts` instead of `admin_enqueue_scripts` so this only loads on this specific form and NOT on all admin pages
-			add_action('admin_print_scripts-' . $menu_slug, array($this, 'admin_includes') );
+			add_action('admin_print_scripts-' . $this->menu_slug, array($this, 'admin_includes') );
 
 			// load on checking of $_POSTs when on this page
-			add_action('load-'.$menu_slug, array($this,'check_posts'));
+			add_action('load-'.$this->menu_slug, array($this,'check_posts'));
 			
 		}
 
@@ -118,7 +119,7 @@ if (!class_exists('VirtualPagesTemplates'))
 				update_option('vpt_options', $_POST);
 				$this->notice = 'Settings saved.';
 				add_action('admin_notices', array($this, 'display_notification'));
-
+				wp_redirect(admin_url('options-general.php?page=' . $this->menu_slug));
 			}
 		}
 
