@@ -211,8 +211,10 @@ if (!class_exists('VirtualPagesTemplates'))
 
             $this->init_keyword($current_url_trimmed, $virtualpageurl_trimmed);
             $virtual_url = str_replace('%postname%', $this->keyword, $virtualpageurl_trimmed);
+
             if ($virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404')) ) 
             {
+            	$this->keyword = str_replace('-', ' ', $this->keyword);
             	// get the template details
             	$this->template_content = $this->get_template_content();
 
