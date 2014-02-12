@@ -176,7 +176,7 @@ if (!class_exists('VirtualPagesTemplates'))
             	$regex = str_replace('/', "\/", $regex);
 
             	$match = preg_match('/(?Ji)^' . $regex.'/', $current_url_trimmed, $matches);
-            	if (!empty($matches)){
+            	if (!empty($matches) && count($matches) > 0 && !empty($matches[0])){
             		$this->keyword = $matches['postname'];
             	}
 			}
@@ -216,6 +216,8 @@ if (!class_exists('VirtualPagesTemplates'))
 
             if ($virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404')) ) 
             {
+            	if (isset($this->options['page_template']))
+            	{
             	$this->keyword = str_replace('-', ' ', $this->keyword);
             	// get the template details
             	$this->template_content = $this->get_template_content();
@@ -275,6 +277,7 @@ if (!class_exists('VirtualPagesTemplates'))
                		$wp_query->is_single = FALSE;
                 }
                 $wp_query->query['page'] = NULL;
+            }
             }
 
             return $posts;

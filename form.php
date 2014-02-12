@@ -105,18 +105,6 @@
                 </td>
             </tr>
 
-            <th scope="row"><label for="spinmethod"><?php _e('Spin Method: ' ); ?></label></th>
-                <td>
-                <select id="spinmethod" name="spinmethod"  style="width: 25em">
-                    <?php foreach ($spinmethods as $spinid => $spinvalue) :?>
-                        <?php if ($spinmethod == $spinid) $selected = 'selected="selected"'; else $selected = '';?>
-                        <option value="<?php echo $spinid?>" <?php echo $selected;?>><?php echo $spinvalue;?></option>
-                    <?php endforeach;?>
-                </select>
-                <p class="description">Specify the spin method, such as domainpage, always spin, every minute, etc..</p>
-                </td>
-            </tr>
-
             <th scope="row"><?php _e('Affect search result ' ); ?></th>
             <td>
                 <?php if ($affect_search) $checked = 'checked="checked"'; else $checked = '';?>
