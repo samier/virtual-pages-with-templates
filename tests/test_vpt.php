@@ -10,6 +10,9 @@ class WP_Test_Vpt extends WP_UnitTestCase
 	/* A reference to the plugin */
  	private $vpt;
  	private $current_user;
+ 	private $keyword_tag = '%vpt-keyword%';
+
+ 	private $test_vpt_keyword = 'this is a test keyword';
 
 	/* Set and initiate the plugins here */
  	function setUp() 
@@ -146,6 +149,111 @@ class WP_Test_Vpt extends WP_UnitTestCase
 			}
 		}
  	}
+
+ 	/**
+ 	 * check if a keyword can be generated
+ 	 */
+ 	function test_init_keyword()
+ 	{
+ 		$this->assertTrue(true);
+ 		$this->vpt->keyword = NULL;
+ 		// a virtual page
+ 		
+ 		// a regular post / page
+ 		$virtualpageurl = '/shop/%postname%';
+ 		$current_url = '/'. $this->test_vpt_keyword;
+ 		$this->vpt->init_keyword($current_url, $virtualpageurl);
+ 		$this->assertNull($this->vpt->keyword);
+
+ 		$virtualpageurl = '/shop/%postname%';
+ 		$current_url = '/shop/'. $this->test_vpt_keyword;;
+ 		$this->vpt->init_keyword($current_url, $virtualpageurl);
+ 		$this->assertEquals($this->test_vpt_keyword, $this->vpt->keyword);
+ 	}
+
+ 	/**
+ 	 * test content replacement method if actually replacing the content
+ 	 */
+ 	function test_get_template_content()
+ 	{
+ 		$this->vpt->keyword = $this->test_vpt_keyword;
+ 		
+ 		$test_content = 'a test content with keyword - `'. $this->keyword_tag .'`';
+ 		$expected_output = str_replace($this->keyword_tag, $this->vpt->keyword, $test_content);
+ 		
+ 		// create test post
+ 		$id = $this->factory->post->create(array('post_title' => 'a test title', 'post_content' => $test_content));
+ 		$this->vpt->options = array('page_template' => $id);
+ 		
+ 		$this->vpt->keyword = $this->test_vpt_keyword;
+ 		$output = $this->vpt->get_template_content();
+ 		$this->assertEquals($expected_output, $expected_output);
+ 	}
+
+ 	/**
+ 	 * test the actual virtual content creation
+ 	 */
+ 	function test_create_virtual()
+ 	{
+ 		$kw_url = $this->test_vpt_keyword;
+ 		// test urls
+ 		$test_wp_urls = array('/'.$kw_url, '/shop/'.$kw_url, '/keyword/'.$kw_url, '/keyword/'.$kw_url.'/testing');
+ 		$test_virtual_urls = array('/%postname%', '/shop/%postname%', '/keyword/%postname%/testing');
+ 		$test_wp_permalinks = array('/%postname%', '/abc/%postname%');
+
+ 		// init
+ 		$this->vpt->keyword = $kw_url;
+ 		$test_content = 'a test content with keyword - `'. $this->keyword_tag .'`';
+		$id = $this->factory->post->create(array('post_title' => 'a test title', 'post_content' => ''));
+
+ 		$this->update_vpt_option(TRUE, '/shop/%postname%/', $id, 'post');
+
+ 		
+ 		// use custom permalink
+ 		$this->start_asserting($test_virtual_urls, $test_wp_urls, $id );
+ 		// do not use custom permalink
+ 		$this->start_asserting($test_wp_permalinks, $test_wp_urls, $id );
+ 	}
+
+ 	private function start_asserting($permalinks, $urls, $post_id)
+ 	{
+ 		// do not use custom permalink
+ 		foreach ($permalinks as $permalink)
+ 		{
+ 			foreach ($urls as $url)
+ 			{
+ 				$_SERVER['REQUEST_URI'] = $url;
+
+ 				$permalink_converted = str_replace('%postname%', $this->test_vpt_keyword, $permalink);
+
+ 				$this->update_vpt_option(TRUE, $permalink, $post_id, 'post');
+ 				if ($permalink_converted == $url)
+ 				{
+ 					// redirect to a virtual post / page
+ 					$this->assertNotEmpty( $this->vpt->create_virtual(array()), $permalink_converted . ' ' . $url );	
+ 				}
+ 				else
+ 				{
+ 					// redirect to normal post / page
+ 					$this->assertEmpty( $this->vpt->create_virtual(array()), $permalink_converted . ' ' . $url );	
+ 				}
+ 			}
+ 		} 
+ 	}
+
+ 	/**
+ 	 * update vpt options
+ 	 */
+ 	private function update_vpt_option($use_custom_permalink_structure = 0, $virtualpageurl = NULL, $page_template = NULL, $post_type = 'post')
+ 	{
+ 		$post = array('use_custom_permalink_structure' => $use_custom_permalink_structure, 
+ 			'virtualpageurl' => $virtualpageurl, 
+ 			'page_template' => $page_template, 
+ 			'post_type' => $post_type);
+ 		update_option('vpt_options', $post);
+ 	}
+
+
 
  	/**
  	 * sets the current user as the admin / temporarily overrides the current user

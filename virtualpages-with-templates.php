@@ -330,7 +330,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		* @param object $posts - the wp posts
 		* @return $posts
 		*/
-		private function get_template_content()
+		public function get_template_content()
 		{
 			global $wp,$wp_query;
 
