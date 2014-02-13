@@ -27,11 +27,13 @@ if (!class_exists('VirtualPagesTemplates'))
         public $notice_iserror = FALSE;
         public $menu_slug = NULL;
 
+        const ERR_URL = 1;
+        const ERR_TEMPLATE = 2;
+
 		public function __construct() 
 		{	
 			if ( ! is_admin() )
 			{
-			//	add_action('vpt_create_virtual', array($this, 'create_virtual') );
 				add_filter('the_posts', array(&$this, 'create_virtual'));
 				add_action('template_redirect', array($this, 'virtual_page_redirect'));
 
@@ -118,8 +120,14 @@ if (!class_exists('VirtualPagesTemplates'))
 				unset($_POST['submit']);
 
 				$extra = '';
-				if (!isset($_POST['page_template'])){
-					$extra = '&no-template=true';
+				
+				if (isset($_POST['use_custom_permalink_structure']) && empty($_POST['virtualpageurl']))
+				{
+					$extra = '&error=' . self::ERR_URL ;
+				}
+				elseif (!isset($_POST['page_template']))
+				{
+					$extra = '&error=' . self::ERR_TEMPLATE ;
 				}
 				else
 				{
@@ -139,17 +147,33 @@ if (!class_exists('VirtualPagesTemplates'))
 				add_action('admin_notices', array($this, 'display_notification'));
 			}
 
-			if ( ! empty( $_GET['no-template'] ) ) 
+			if ( ! empty( $_GET['error'] ) ) 
 			{
-				$this->notice = 'Page template is required. You can make a template by creating a <a href="'.admin_url('post-new.php').'">post</a> or a <a href="'.admin_url('post-new.php?post_type=page').'">page</a> as save it as draft.';
+				$this->set_error_message($_GET['error']);
 				$this->notice_iserror = TRUE;
 				add_action('admin_notices', array($this, 'display_notification'));
 			}
 		}
 
-		private function validate_page_template()
-		{
-			//if ()
+		/**
+		* set_error_message
+		* 
+		* sets the error message based on the given error code
+		*
+		* @access public 
+		* @return NONE
+		*/
+		private function set_error_message($error){
+			switch ($error) {
+				case self::ERR_URL:
+					$this->notice = 'Please indicate the custom Virtual Page URL.';
+					break;
+				case self::ERR_TEMPLATE:
+					$this->notice = 'Page template is required. You can make a template by creating a <a href="'.admin_url('post-new.php').'">post</a> or a <a href="'.admin_url('post-new.php?post_type=page').'">page</a> as save it as draft.';
+				default:
+					# code...
+					break;
+			}
 		}
 
 		/**

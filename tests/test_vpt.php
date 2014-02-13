@@ -106,6 +106,48 @@ class WP_Test_Vpt extends WP_UnitTestCase
  	}
 
  	/**
+ 	 * form validation
+ 	 */
+ 	function test_form_submission()
+ 	{	
+ 		// will use current permalink struct but no template used
+ 		$post = array('vpt_hidden' => 'Y');
+ 		$this->assertFalse($this->check_posts($post));
+ 		// use_custom_permalink_structure url s true but no custom url assigned
+ 		$post = array('vpt_hidden' => 'Y', 'use_custom_permalink_structure' => 1);
+ 		$this->assertFalse($this->check_posts($post));
+ 		// use_custom_permalink_structure url s true but no template assigned
+ 		$post = array('vpt_hidden' => 'Y', 'use_custom_permalink_structure' => 1, 'virtualpageurl' => '123');
+ 		$this->assertFalse($this->check_posts($post));
+ 		// use_custom_permalink_structure url is true has custom url and has template
+ 		$post = array('vpt_hidden' => 'Y', 'use_custom_permalink_structure' => 1, 'virtualpageurl' => '123', 'page_template' => 1);
+ 		$this->assertTRUE($this->check_posts($post));	
+ 		// used a template and will use current permalink struct
+ 		$post = array('vpt_hidden' => 'Y', 'page_template' => 1);
+ 		$this->assertTRUE($this->check_posts($post), 'xxxx');
+ 	}
+
+ 	/**
+ 	 * mimic form validation process
+ 	 */
+ 	private function check_posts($post)
+ 	{
+ 		if(isset($post['vpt_hidden']) && $post['vpt_hidden'] == 'Y') 
+ 		{  
+			if (isset($post['use_custom_permalink_structure']) && empty($post['virtualpageurl'])){
+				return FALSE;
+			}
+			elseif (!isset($post['page_template'])){
+				return FALSE;
+			}
+			else
+			{
+				return TRUE;
+			}
+		}
+ 	}
+
+ 	/**
  	 * sets the current user as the admin / temporarily overrides the current user
  	 */
  	private function set_admin_user()

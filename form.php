@@ -6,7 +6,6 @@
     $virtualpageurl = '/shop/%postname%';
     $post_type = 'page';
     $page_template = null;
-    $spinmethod = 'domainpage';
     $use_custom_permalink_structure = FALSE;
     $affect_search = TRUE;
 
@@ -14,40 +13,37 @@
         $virtualpageurl = $options['virtualpageurl'];
         $post_type = $options['post_type'];
         $page_template = $options['page_template'];
-        $spinmethod = $options['spinmethod'];
         $use_custom_permalink_structure = $options['use_custom_permalink_structure'];
         $affect_search = $options['affect_search'];
     }
 
-    $spinmethods = array(
-        'domainpage' => 'domain page (default)',
-        'every second' => 'every second',
-        'every minute' => 'every minute',
-        'hourly' => 'hourly',
-        'daily' => 'daily',
-        'weekly' => 'weekly',
-        'monthly' => 'monthly',
-        'annually' => 'annually',
-        'false' => 'always spin'
-    );
     $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );
     $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );
 
     
     $class = 'hidden';
-    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['no-template']) && !isset($_GET['settings-updated']))
+    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['error']) && !isset($_GET['settings-updated']))
     {
         $class = '';    
     }
     
     ?>
-    <div class="error no-template-message <?php echo $class;?>" id="message">
+    <div class="error no-url hidden">
+        <p>
+            <strong>
+                Please indicate the custom Virtual Page URL.
+            </strong>
+        </p>
+    </div>
+
+    <div class="error no-template-message <?php echo $class;?>">
         <p>
             <strong>
                 Page template is required. You can make a template by creating a <a href="<?php echo admin_url('post-new.php')?>">post</a> or a <a href="<?php echo admin_url('post-new.php?post_type=page')?>">page</a> as save it as draft.
             </strong>
         </p>
     </div>
+    
     <form id="vpt_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" class="validate">
         <input type="hidden" name="vpt_hidden" value="Y"/>  
         <table class="form-table">
