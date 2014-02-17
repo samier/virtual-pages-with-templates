@@ -4,32 +4,17 @@
     <?php 
     $options = get_option('vpt_options');
     $virtualpageurl = '/shop/%postname%';
-    $post_type = 'page';
     $page_template = null;
-    $spinmethod = 'domainpage';
     $use_custom_permalink_structure = FALSE;
     $affect_search = TRUE;
 
     if (!empty($options)){
         $virtualpageurl = $options['virtualpageurl'];
-        $post_type = $options['post_type'];
         $page_template = $options['page_template'];
-        $spinmethod = $options['spinmethod'];
         $use_custom_permalink_structure = $options['use_custom_permalink_structure'];
         $affect_search = $options['affect_search'];
     }
 
-    $spinmethods = array(
-        'domainpage' => 'domain page (default)',
-        'every second' => 'every second',
-        'every minute' => 'every minute',
-        'hourly' => 'hourly',
-        'daily' => 'daily',
-        'weekly' => 'weekly',
-        'monthly' => 'monthly',
-        'annually' => 'annually',
-        'false' => 'always spin'
-    );
     $posts = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('post') ) );
     $pages = new WP_Query( array( 'post_status' => array('draft'), 'post_type' => array('page') ) );
 
@@ -66,18 +51,6 @@
                     </div>
                 </td>
             </tr>
-
-            <tr>
-            <th scope="row"><?php _e('Post or Post? ' ); ?></th>
-            <td>
-                <fieldset><legend class="screen-reader-text"><span><?php _e('Post or Post? ' ); ?></span></legend>
-                <?php if ($post_type == 'page') $checked = 'checked="checked"'; else $checked = '';?>
-                <label title="Page"><input type="radio" <?php echo $checked;?> value="page" name="post_type"> <span>Page</span></label><br>
-                <?php if ($post_type == 'post') $checked = 'checked="checked"'; else $checked = '';?>
-                <label title="Post"><input type="radio" <?php echo $checked;?>  value="post" name="post_type"> <span>Post</span></label><br>
-                <p class="description">Specify if the virtual page should act as a page or as a post</p>
-                </fieldset>
-            </td>
            
             <tr valign="top">
             <th scope="row"><label for="default_role"><?php _e('Page Template: ' ); ?></label></th>
@@ -104,25 +77,15 @@
                 <p class="description">Specify an existing post or page (one that isn’t published) that will be used as a template.</p>
                 </td>
             </tr>
-
-            <th scope="row"><label for="spinmethod"><?php _e('Spin Method: ' ); ?></label></th>
-                <td>
-                <select id="spinmethod" name="spinmethod"  style="width: 25em">
-                    <?php foreach ($spinmethods as $spinid => $spinvalue) :?>
-                        <?php if ($spinmethod == $spinid) $selected = 'selected="selected"'; else $selected = '';?>
-                        <option value="<?php echo $spinid?>" <?php echo $selected;?>><?php echo $spinvalue;?></option>
-                    <?php endforeach;?>
-                </select>
-                <p class="description">Specify the spin method, such as domainpage, always spin, every minute, etc..</p>
-                </td>
-            </tr>
-
+   
+            <tr valign="top">
             <th scope="row"><?php _e('Affect search result ' ); ?></th>
             <td>
                 <?php if ($affect_search) $checked = 'checked="checked"'; else $checked = '';?>
                <label for="affect_search"><input type="checkbox" value="1" id="affect_search" <?php echo $checked;?> name="affect_search"></label>
                <p class="description">Generate virtual page using the searched keyword if there are no pages found</p>
             </td>
+            </tr>
             </tbody>
         </table>
 

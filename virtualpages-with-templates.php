@@ -242,7 +242,7 @@ if (!class_exists('VirtualPagesTemplates'))
                 $post->menu_order = 0;
                 $post->filter ='raw';
                 // is page or a post
-                $post->post_type = $this->options['post_type'];
+                $post->post_type = $this->template->post_type;
 
                 $posts = NULL;
                 $posts[] = $post;
@@ -308,7 +308,7 @@ if (!class_exists('VirtualPagesTemplates'))
 			global $wp,$wp_query;
 
 			$this->template = get_post($this->options['page_template']);      
-
+			
 			$this->template_content = str_replace('%vpt-keyword%', $this->keyword, $this->template->post_content);
 
 			return $this->template_content;
