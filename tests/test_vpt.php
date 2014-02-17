@@ -127,7 +127,7 @@ class WP_Test_Vpt extends WP_UnitTestCase
  		$this->assertTRUE($this->check_posts($post));	
  		// used a template and will use current permalink struct
  		$post = array('vpt_hidden' => 'Y', 'page_template' => 1);
- 		$this->assertTRUE($this->check_posts($post), 'xxxx');
+ 		$this->assertTRUE($this->check_posts($post));
  	}
 
  	/**
