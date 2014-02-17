@@ -187,7 +187,8 @@ class WP_Test_Vpt extends WP_UnitTestCase
  		
  		$this->vpt->keyword = $this->test_vpt_keyword;
  		$output = $this->vpt->get_template_content();
- 		$this->assertEquals($expected_output, $expected_output);
+
+ 		$this->assertEquals($expected_output, $output);
  	}
 
  	/**
