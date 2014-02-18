@@ -103,7 +103,7 @@ class WP_Test_Vpt extends WP_UnitTestCase
  		//Assert
  		foreach($plugin_js as $js){
  			if(wp_script_is($js, 'enqueued')===FALSE){
- 				$this->fail();
+ 				$this->fail('The script ' . $js . ' was not loaded'); 
  			}
  		}
  	}
