@@ -5,7 +5,6 @@ jQuery(document).ready(function () {
 	});
 
 	jQuery( "#vpt_form" ).submit(function( event ) {
-		
 		if (Vpt.validate_form())
 			return
 		else
@@ -25,15 +24,24 @@ var Vpt = {
 		}
 	},
 	validate_form : function (){
+		var passed = true;
+		if (jQuery('#use_custom_permalink_structure').is(':checked') && jQuery('#virtualpageurl').val() == ''){
+			jQuery('#message').remove();
+			jQuery('.no-url').show();
+			passed = false;
+		}else{
+			jQuery('.no-url ').hide();	
+		}
+
 		if (!jQuery('#page_template').val()){
-			jQuery('#message:not(.no-template-message)').remove();
-			jQuery('.error:not(.no-template-message)').remove();
+			jQuery('#message').remove();
 			jQuery('.no-template-message ').show();
-			return false;
+			passed = false;
 		}else{
 			jQuery('.no-template-message ').hide();	
-			return true;
 	}
+
+		return passed;
 }
 
 
