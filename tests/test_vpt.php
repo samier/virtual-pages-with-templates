@@ -20,9 +20,6 @@ class WP_Test_Vpt extends WP_UnitTestCase
 		parent::setUp();
  		$this->vpt = new VirtualPagesTemplates;
  		$this->current_user = get_current_user_id();
-
- 		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
- 		
  	}
  
  	function tearDown() 
