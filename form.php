@@ -20,19 +20,28 @@
 
     
     $class = 'hidden';
-    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['no-template']) && !isset($_GET['settings-updated']))
+    if (empty($posts->posts) && empty($pages->posts) && !isset($_GET['error']) && !isset($_GET['settings-updated']))
     {
         $class = '';    
     }
     
     ?>
-    <div class="error no-template-message <?php echo $class;?>" id="message">
+    <div class="error no-url hidden">
+        <p>
+            <strong>
+                Please indicate the custom Virtual Page URL.
+            </strong>
+        </p>
+    </div>
+
+    <div class="error no-template-message <?php echo $class;?>">
         <p>
             <strong>
                 Page template is required. You can make a template by creating a <a href="<?php echo admin_url('post-new.php')?>">post</a> or a <a href="<?php echo admin_url('post-new.php?post_type=page')?>">page</a> as save it as draft.
             </strong>
         </p>
     </div>
+    
     <form id="vpt_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" class="validate">
         <input type="hidden" name="vpt_hidden" value="Y"/>  
         <table class="form-table">
