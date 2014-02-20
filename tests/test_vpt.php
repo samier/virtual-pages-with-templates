@@ -373,6 +373,42 @@ class WP_Test_Vpt extends WP_UnitTestCase
  	}
 
  	/**
+	 * Test plugin's vpt_body_class
+	 *
+	 * body class e.g. postid-1 or page-id-1 should only be displayed on normal pages
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+ 	function test_vpt_body_class()
+ 	{
+ 		// POST
+ 		$GLOBALS['post'] = $this->factory->post->create_and_get( array('post_type' => 'post') );
+
+ 		$wp_classes_post = array('single', 'single-post', 'postid-' . $GLOBALS['post']->ID, 'single-format-standard', 'masthead-fixed', 'full-width', 'singular');
+
+ 		// normal post - body class should be existing
+ 		$this->assertTrue(in_array('postid-' . $GLOBALS['post']->ID, $this->vpt->vpt_body_class($wp_classes_post)));
+
+ 		// virtual page - body class should not be existing
+ 		$this->vpt->template = TRUE;
+ 		$this->assertFalse(in_array('postid-' . $GLOBALS['post']->ID, $this->vpt->vpt_body_class($wp_classes_post)));
+
+ 		// PAGE
+ 		$this->vpt->template = NULL;
+ 		$GLOBALS['post'] = $this->factory->post->create_and_get( array('post_type' => 'page') );
+ 		$wp_classes_page = array('page', 'page-id-' . $GLOBALS['post']->ID, 'page-template-default', 'masthead-fixed', 'full-width', 'singular');
+	 		
+ 		// normal post - body class should be existing
+ 		$this->assertTrue(in_array('page-id-' . $GLOBALS['post']->ID, $this->vpt->vpt_body_class($wp_classes_page)));
+
+ 		// virtual page - body class should not be existing
+ 		$this->vpt->template = TRUE;
+ 		$this->assertFalse(in_array('page-id-' . $GLOBALS['post']->ID, $this->vpt->vpt_body_class($wp_classes_page)));
+ 	}
+
+ 	/**
  	 * sets the current user as the admin / temporarily overrides the current user
  	 */
  	private function set_admin_user()
