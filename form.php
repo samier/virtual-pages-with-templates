@@ -4,14 +4,12 @@
     <?php 
     $options = get_option('vpt_options');
     $virtualpageurl = '/shop/%postname%';
-    $post_type = 'page';
     $page_template = null;
     $use_custom_permalink_structure = FALSE;
     $affect_search = TRUE;
 
     if (!empty($options)){
         $virtualpageurl = $options['virtualpageurl'];
-        $post_type = $options['post_type'];
         $page_template = $options['page_template'];
         $use_custom_permalink_structure = $options['use_custom_permalink_structure'];
         $affect_search = $options['affect_search'];
@@ -62,18 +60,6 @@
                     </div>
                 </td>
             </tr>
-
-            <tr>
-            <th scope="row"><?php _e('Post or Post? ' ); ?></th>
-            <td>
-                <fieldset><legend class="screen-reader-text"><span><?php _e('Post or Post? ' ); ?></span></legend>
-                <?php if ($post_type == 'page') $checked = 'checked="checked"'; else $checked = '';?>
-                <label title="Page"><input type="radio" <?php echo $checked;?> value="page" name="post_type"> <span>Page</span></label><br>
-                <?php if ($post_type == 'post') $checked = 'checked="checked"'; else $checked = '';?>
-                <label title="Post"><input type="radio" <?php echo $checked;?>  value="post" name="post_type"> <span>Post</span></label><br>
-                <p class="description">Specify if the virtual page should act as a page or as a post</p>
-                </fieldset>
-            </td>
            
             <tr valign="top">
             <th scope="row"><label for="default_role"><?php _e('Page Template: ' ); ?></label></th>
@@ -100,13 +86,15 @@
                 <p class="description">Specify an existing post or page (one that isn’t published) that will be used as a template.</p>
                 </td>
             </tr>
-
+   
+            <tr valign="top">
             <th scope="row"><?php _e('Affect search result ' ); ?></th>
             <td>
                 <?php if ($affect_search) $checked = 'checked="checked"'; else $checked = '';?>
                <label for="affect_search"><input type="checkbox" value="1" id="affect_search" <?php echo $checked;?> name="affect_search"></label>
                <p class="description">Generate virtual page using the searched keyword if there are no pages found</p>
             </td>
+            </tr>
             </tbody>
         </table>
 
