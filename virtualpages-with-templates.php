@@ -153,15 +153,18 @@ if (!class_exists('VirtualPagesTemplates'))
 		    if (is_search()) {
 		        global $wp_query;
 
-		        if ($this->options['affect_search'] && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404') || (count($wp_query->posts) == 1 && $wp_query->post->ID == -1)))
+		        if ($this->options['affect_search'] )
 		        {
-	        	$structure = $this->permalink_structure;
-	        	if ($this->use_custom_permalink){
-	        		$structure = $this->options['virtualpageurl'];
-		        }
+		        	if (count($wp_query->posts) == 0  || !is_null($this->template) && $wp_query->post->ID == $this->template->ID)
+		        	{
+		        		$structure = $this->permalink_structure;
+		        		if ($this->use_custom_permalink){
+		        			$structure = $this->options['virtualpageurl'];
+			        	}
 
-	        	if (strpos($structure, '%postname%'))
-	        		wp_redirect( str_replace('%postname%', $wp_query->query['s'] , $structure) );
+		        		if (strpos($structure, '%postname%'))
+		        			wp_redirect( str_replace('%postname%', $wp_query->query['s'] , $structure) );
+			        }	
 		        }
 		    }
 		}
@@ -327,7 +330,7 @@ if (!class_exists('VirtualPagesTemplates'))
             	$this->keyword = str_replace('-', ' ', $this->keyword);
             	// get the template details
             	$this->template_content = $this->get_template_content();
-
+            	
             	//create a fake page
                 $post = new stdClass;
                	$post->post_author = 1;
