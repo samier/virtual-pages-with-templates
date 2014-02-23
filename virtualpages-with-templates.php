@@ -34,18 +34,20 @@ if (!class_exists('VirtualPagesTemplates'))
 		{	
 			if ( ! is_admin() )
 			{
+				
 				add_filter('the_posts', array(&$this, 'create_virtual'));
 				add_action('template_redirect', array($this, 'virtual_page_redirect'));
 
-				remove_action('wp_head', 'rel_canonical');
-				add_action('wp_head', array($this, 'vpt_rel_canonical'),10);
+				 remove_action('wp_head', 'rel_canonical');
+				 add_action('wp_head', array($this, 'vpt_rel_canonical'),10);
 
-				remove_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 ); // Remove WordPress shortlink on wp_head hook
-				add_action('wp_head', array($this, 'vpt_shortlink_wp_head'), 10, 0); // custom shortlink
+				 remove_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 ); // Remove WordPress shortlink on wp_head hook
+				 add_action('wp_head', array($this, 'vpt_shortlink_wp_head'), 10, 0); // custom shortlink
 
-				add_filter('body_class', array($this, 'vpt_body_class'), 20, 2);
+				 add_filter('body_class', array($this, 'vpt_body_class'), 20, 2);
 				
 			}else{
+				
 				add_action( 'admin_menu', array($this, 'display_menu') );
 				register_uninstall_hook(__FILE__, array('VirtualPagesTemplates','vpt_uninstall_plugin'));
 
@@ -150,23 +152,29 @@ if (!class_exists('VirtualPagesTemplates'))
 		* @return void
 		*/
 	  	public function virtual_page_redirect() {
-		    if (is_search()) {
+		   if (is_search()) {
 		        global $wp_query;
-
-		        if ($this->options['affect_search'] )
-		        {
-		        	if (count($wp_query->posts) == 0  || !is_null($this->template) && $wp_query->post->ID == $this->template->ID)
-		        	{
+				
+			if ($this->options['affect_search'] )
+		        {					
+		        	if (count($wp_query->posts) == 0 || $wp_query->post->ID == -1 || (!is_null($this->template) && $wp_query->post->ID == $this->template->ID ))
+		        	{					
 		        		$structure = $this->permalink_structure;
+						
 		        		if ($this->use_custom_permalink){
 		        			$structure = $this->options['virtualpageurl'];
-			        	}
-
-		        		if (strpos($structure, '%postname%'))
-		        			wp_redirect( str_replace('%postname%', $wp_query->query['s'] , $structure) );
-			        }	
+			        	}                                                                                  
+		        		if (strpos($structure, '%postname%') !== false)
+                                        {	
+                                            $host_path = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']);
+					    $host_path = str_replace('index.php','',$host_path);
+					    $host_path = trim($host_path,'/');                                            
+					    wp_redirect('http://'.$_SERVER['HTTP_HOST'].'/'.$host_path.str_replace('%postname%', ltrim($wp_query->query['s'],'/') , $structure));
+					}
+			        }
 		        }
-		    }
+		    } 
+		
 		}
 
 	  	/**
@@ -262,35 +270,57 @@ if (!class_exists('VirtualPagesTemplates'))
 		}
 
 		/**
+		 * url_match
+		 * 
+                 * match url
+                 * @access public
+                 * return Bool
+		*/		
+		public function url_match($current_url,$virtual_url)
+		{
+                    $cnt = count($virtual_url);
+                    for($ind=0;$ind<$cnt;$ind++)
+		    {
+                        if($virtual_url[$ind] != $current_url[$ind]) 
+			{
+                            return 0;
+			}
+                    }			
+                    return 1;
+		}
+
+		
+		
+		
+		/**
 		* init_keyord
 		* 
 		* initialize the keyword
 		*
 		* @access public 
-		* @return void
-		*/
-		public function init_keyword($current_url_trimmed, $virtualpageurl_trimmed){
-			global $wp,$wp_query;
+		* @return  bool $match
+		*/		
+		
+		public function init_keyword($current_url_trimmed,$virtualpage_url){
+                    global $wp,$wp_query;
+		    $match = 0;
+                    
+                    	$vr_arr = explode('/',$virtualpage_url);
+			$cu_arr = explode('/',$current_url_trimmed);
+			$ind = array_search('%postname%',$vr_arr);
+			if(count($vr_arr) == count($cu_arr) && $ind !== false ) {
+                            $vr_arr[$ind] = $cu_arr[$ind];
+                            $match = $this->url_match($cu_arr,$vr_arr);	
+                            $this->keyword = $cu_arr[$ind];
+                        }
 			if (isset($wp_query->query['name']) and $wp_query->query['name'])
-            {
-            	$this->keyword = $wp_query->query['name'];
-            }
-            else
-            {
-            	$needles = array('%postname%');
-            	$replacements_regex = array(
-                	'(?<postname>[^/]+)',
-            	);
-            	$regex = str_replace($needles, $replacements_regex, $virtualpageurl_trimmed);
-            	$regex = str_replace('/', "\/", $regex);
-
-            	$match = preg_match('/(?Ji)^' . $regex.'/', $current_url_trimmed, $matches);
-            	if (!empty($matches) && count($matches) > 0 && !empty($matches[0])){
-            		$this->keyword = $matches['postname'];
-            	}
+                        {
+                            $this->keyword = $wp_query->query['name'];                            			   
 			}
+			return $match;
 		}
-
+		
+		
 		/**
 		* create_virtual
 		* 
@@ -300,6 +330,7 @@ if (!class_exists('VirtualPagesTemplates'))
 		* @param object $posts - the wp posts
 		* @return $posts
 		*/
+			
 		public function create_virtual($posts)
 		{
 			global $wp,$wp_query;
@@ -312,18 +343,34 @@ if (!class_exists('VirtualPagesTemplates'))
             $this->use_custom_permalink = (BOOL) $this->options['use_custom_permalink_structure'];
 
             if (!$this->use_custom_permalink)
-				$virtualpageurl = $this->permalink_structure;
+		$virtualpageurl = $this->permalink_structure;
             else
             	$virtualpageurl = $this->options['virtualpageurl'];
 
-            // trim slashes
-            $virtualpageurl_trimmed = trim($virtualpageurl, '/');
-            $current_url_trimmed = trim($current_url, '/');
-
-            $this->init_keyword($current_url_trimmed, $virtualpageurl_trimmed);
+           
+            			$match = 0;
+			$current_url = $_SERVER['REQUEST_URI'];
+			
+			$host_path = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']);
+			$host_path = str_replace('index.php','',$host_path);
+			$host_name = trim($host_path,'/');
+			$host_path = str_replace('/','\/',$host_name);
+			
+			if(!empty($host_path) && preg_match('/'.$host_path.'/',$current_url)) /// code for localhost
+			{
+				$current_url_splite = explode($host_name,$current_url);
+				$current_url_splite = array_pop($current_url_splite);
+				$current_url_trimmed = trim($current_url_splite, '/');
+			}
+			else
+				$current_url_trimmed = trim($current_url, '/'); //code for virtual host			
+				
+				$virtualpageurl_trimmed = trim($virtualpageurl, '/');
+				$match = $this->init_keyword($current_url_trimmed,$virtualpageurl_trimmed);
+            
             $virtual_url = str_replace('%postname%', $this->keyword, $virtualpageurl_trimmed);
 
-            if ($virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404')) ) 
+            if ($match && $virtual_url == $current_url_trimmed && (count($wp_query->posts) == 0 || (isset($wp_query->query['error']) && $wp_query->query['error'] == '404')) ) 
             {
             	if (isset($this->options['page_template']))
             	{
@@ -392,6 +439,7 @@ if (!class_exists('VirtualPagesTemplates'))
 
             return $posts;
             }
+
             
 		/**
 		* add_uncategorized_class
